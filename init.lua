@@ -499,7 +499,6 @@ require("lazy").setup({
 
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-buffer",
 
 			"rafamadriz/friendly-snippets",
 		},
@@ -561,7 +560,6 @@ require("lazy").setup({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "path" },
-					{ name = "buffer" },
 				},
 			})
 		end,
@@ -725,3 +723,41 @@ vim.keymap.set(
 	"<cmd>TroubleToggle workspace_diagnostics<CR>",
 	{ desc = "[W]orkspace [D]iagnostics" }
 )
+
+-- harpoon
+local harpoon = require("harpoon")
+
+-- REQUIRED
+harpoon:setup()
+-- REQUIRED
+
+vim.keymap.set("n", "<leader>ha", function()
+	harpoon:list():append()
+end, { desc = "[H]arpoon [A]ppend" })
+vim.keymap.set("n", "<leader>hm", function()
+	harpoon.ui:toggle_quick_menu(harpoon:list())
+end, { desc = "[H]arpoon [M]enu" })
+
+vim.keymap.set("n", "<A-+>", function()
+	harpoon:list():select(1)
+end)
+vim.keymap.set("n", "<A-ě>", function()
+	harpoon:list():select(2)
+end)
+vim.keymap.set("n", "<A-š>", function()
+	harpoon:list():select(3)
+end)
+vim.keymap.set("n", "<A-č>", function()
+	harpoon:list():select(4)
+end)
+vim.keymap.set("n", "<A-ř>", function()
+	harpoon:list():select(5)
+end)
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set("n", "<leader>hp", function()
+	harpoon:list():prev()
+end, { desc = "[H]arpoon [P]revious" })
+vim.keymap.set("n", "<leader>hn", function()
+	harpoon:list():next()
+end, { desc = "[H]arpoon [N]ext" })

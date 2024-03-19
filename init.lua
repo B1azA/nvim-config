@@ -21,6 +21,11 @@ vim.opt.number = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = "a"
 
+-- Fold
+vim.opt.foldmethod = "expr"
+vim.opt.foldlevelstart = 99
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
@@ -79,7 +84,6 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -495,6 +499,7 @@ require("lazy").setup({
 
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-buffer",
 
 			"rafamadriz/friendly-snippets",
 		},
@@ -556,6 +561,7 @@ require("lazy").setup({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "path" },
+					{ name = "buffer" },
 				},
 			})
 		end,
@@ -712,3 +718,10 @@ vim.keymap.set("n", "<leader>df", function()
 end, { desc = "[D]ocument [F]ormat" })
 
 vim.keymap.set("n", "<C-p>", "<Esc>o<Esc>p")
+vim.keymap.set("n", "<leader>dd", "<cmd>TroubleToggle document_diagnostics<CR>", { desc = "[D]ocument [D]iagnostics" })
+vim.keymap.set(
+	"n",
+	"<leader>wd",
+	"<cmd>TroubleToggle workspace_diagnostics<CR>",
+	{ desc = "[W]orkspace [D]iagnostics" }
+)

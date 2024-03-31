@@ -43,11 +43,33 @@ return {
 			},
 		})
 
+		dap.adapters.lldb = {
+			type = "executable",
+			command = "/sbin/lldb-vscode", -- adjust as needed, must be absolute path
+			name = "lldb",
+		}
+
+		dap.configurations.c = {
+			{
+				name = "Launch",
+				type = "lldb",
+				request = "launch",
+				program = function()
+					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+				end,
+				cwd = "${workspaceFolder}",
+				stopOnEntry = false,
+				args = {},
+			},
+		}
+
 		-- Basic debugging keymaps, feel free to change to your liking!
 		vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
+		vim.keymap.set("n", "<F8>", dap.terminate, { desc = "Debug: Terminate" })
 		vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
 		vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
 		vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
+
 		vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
 		vim.keymap.set("n", "<leader>B", function()
 			dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))

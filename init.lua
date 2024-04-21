@@ -71,7 +71,7 @@ vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 999
+vim.opt.scrolloff = 8
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -766,3 +766,11 @@ end, { desc = "[H]arpoon [N]ext" })
 
 -- Toggleterm
 vim.keymap.set("n", "<leader>t", "<cmd>ToggleTerm direction=float<cr>", { desc = "[T]erm" })
+
+-- WGSL
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+	pattern = "*.wgsl",
+	callback = function()
+		vim.bo.filetype = "wgsl"
+	end,
+})

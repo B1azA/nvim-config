@@ -217,7 +217,7 @@ require("lazy").setup({
 				{ "<leader>r", group = "[R]ename" },
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>w", group = "[W]orkspace" },
-				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>t", group = "[T]erminal" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 			},
 		},
@@ -499,7 +499,7 @@ require("lazy").setup({
 		opts = {
 			notify_on_error = false,
 			format_on_save = {
-				timeout_ms = 500,
+				timeout_ms = 2500,
 				lsp_fallback = true,
 			},
 			formatters_by_ft = {
@@ -651,13 +651,13 @@ require("lazy").setup({
 			-- - sr)'  - [S]urround [R]eplace [)] [']
 			require("mini.surround").setup({
 				mappings = {
-					add = "Sa", -- Add surrounding in Normal and Visual modes
-					delete = "Sd", -- Delete surrounding
-					find = "Sf", -- Find surrounding (to the right)
-					find_left = "SF", -- Find surrounding (to the left)
-					highlight = "Sh", -- Highlight surrounding
-					replace = "Sr", -- Replace surrounding
-					update_n_lines = "Sn", -- Update `n_lines`
+					add = "ša", -- Add surrounding in Normal and Visual modes
+					delete = "šd", -- Delete surrounding
+					find = "šf", -- Find surrounding (to the right)
+					find_left = "šF", -- Find surrounding (to the left)
+					highlight = "šh", -- Highlight surrounding
+					replace = "šr", -- Replace surrounding
+					update_n_lines = "šn", -- Update `n_lines`
 
 					suffix_last = "l", -- Suffix to search with "prev" method
 					suffix_next = "n", -- Suffix to search with "next" method
@@ -755,13 +755,13 @@ vim.keymap.set("n", "<leader>df", function()
 end, { desc = "[D]ocument [F]ormat" })
 
 vim.keymap.set("n", "<C-p>", "<Esc>o<Esc>p")
-vim.keymap.set("n", "<leader>dd", "<cmd>TroubleToggle document_diagnostics<CR>", { desc = "[D]ocument [D]iagnostics" })
 vim.keymap.set(
 	"n",
-	"<leader>wd",
-	"<cmd>TroubleToggle workspace_diagnostics<CR>",
-	{ desc = "[W]orkspace [D]iagnostics" }
+	"<leader>dd",
+	"<cmd>Trouble diagnostics toggle filter.buf=0<CR>",
+	{ desc = "[D]ocument [D]iagnostics" }
 )
+vim.keymap.set("n", "<leader>wd", "<cmd>Trouble diagnostics toggle<CR>", { desc = "[W]orkspace [D]iagnostics" })
 
 -- harpoon
 local harpoon = require("harpoon")
@@ -813,4 +813,4 @@ vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
 })
 
 -- No DEPRECATED error
-vim.deprecate = function() end
+-- vim.deprecate = function() end

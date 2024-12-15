@@ -63,6 +63,27 @@ return {
 			},
 		}
 
+		dap.adapters.coreclr = {
+			type = "executable",
+			command = vim.fn.expand("$HOME/.local/share/nvim/mason/bin/netcoredbg"),
+			args = { "--interpreter=vscode" },
+		}
+
+		dap.configurations.cs = {
+			{
+				type = "coreclr",
+				name = "launch - netcoredbg",
+				request = "launch",
+				program = function()
+					vim.cmd("!dotnet build")
+					vim.api.nvim_feedkeys("<CR>", "n", false)
+					-- os.execute("dotnet build")
+					-- return vim.fn.input("Path to dll", vim.fn.getcwd() .. "/bin/Debug/", "file")
+					return "bin/Debug/net8.0/${workspaceFolderBasename}.dll"
+				end,
+			},
+		}
+
 		-- Basic debugging keymaps, feel free to change to your liking!
 		vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
 		vim.keymap.set("n", "<F8>", dap.terminate, { desc = "Debug: Terminate" })
@@ -95,14 +116,35 @@ return {
 					disconnect = "⏏",
 				},
 			},
+			layouts = {
+				{
+					elements = {
+						-- Elements can be strings or table with id and size keys.
+						{ id = "scopes", size = 0.25 },
+						"breakpoints",
+						"stacks",
+						"watches",
+					},
+					size = 40, -- 40 columns
+					position = "left",
+				},
+				{
+					elements = {
+						"repl",
+						"console",
+					},
+					size = 0.25, -- 25% of total lines
+					position = "bottom",
+				},
+			},
 		})
 
 		-- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
 		vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
 
 		dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-		dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-		dap.listeners.before.event_exited["dapui_config"] = dapui.close
+		-- dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+		-- dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
 		-- Install golang specific config
 		require("dap-go").setup()

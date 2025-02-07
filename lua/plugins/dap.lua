@@ -55,13 +55,24 @@ return {
 				type = "lldb",
 				request = "launch",
 				program = function()
-					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+					vim.cmd("!cmake --build build/")
+					local exit_code = vim.v.shell_error
+					if exit_code == 0 then
+						vim.api.nvim_feedkeys("<CR>", "n", false)
+						return "build/${workspaceFolderBasename}"
+					else
+						return ""
+					end
+
+					-- return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
 				end,
 				cwd = "${workspaceFolder}",
 				stopOnEntry = false,
 				args = {},
 			},
 		}
+
+		dap.configurations.cpp = dap.configurations.c
 
 		dap.adapters.coreclr = {
 			type = "executable",
@@ -143,8 +154,8 @@ return {
 		vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
 
 		dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-		-- dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-		-- dap.listeners.before.event_exited["dapui_config"] = dapui.close
+		dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+		dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
 		-- Install golang specific config
 		require("dap-go").setup()

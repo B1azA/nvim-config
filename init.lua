@@ -28,6 +28,7 @@ vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+vim.opt.wrap = false
 
 -- Don't show the mode, since it's already in status line
 vim.opt.showmode = false
@@ -84,6 +85,9 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
+
+-- Show error diagnostics automatically
+--vim.cmd([[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]])
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -218,7 +222,7 @@ require("lazy").setup({
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>w", group = "[W]orkspace" },
 				{ "<leader>t", group = "[T]erminal" },
-				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+				{ "<leader>h", group = "[H]arpoon", mode = { "n", "v" } },
 			},
 		},
 	},
@@ -274,7 +278,10 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
 			vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
-			vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+			vim.keymap.set("n", "<leader>ss", function()
+				builtin.find_files({ cwd = "src" })
+			end, { desc = "[S]earch [S]ource" })
+			vim.keymap.set("n", "<leader>st", builtin.builtin, { desc = "[S]earch [T]elescope" })
 			vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
 			vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
 			vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
@@ -376,7 +383,7 @@ require("lazy").setup({
 					-- Jump to the type of the word under your cursor.
 					--  Useful when you're not sure what type a variable is and you want to see
 					--  the definition of its *type*, not where it was *defined*.
-					map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+					-- map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
 
 					-- Fuzzy find all the symbols in your current document.
 					--  Symbols are things like variables, functions, types, etc.
@@ -430,10 +437,21 @@ require("lazy").setup({
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 			local servers = {
-				-- clangd = {},
+				clangd = {
+					cmd = {
+						"clangd",
+						"--background-index",
+						"--clang-tidy",
+						"--header-insertion=iwyu",
+						"--completion-style=detailed",
+						"--function-arg-placeholders=0",
+						"--fallback-style=llvm",
+						"--enable-config",
+					},
+				},
 				-- gopls = {},
 				-- pyright = {},
-				-- rust_analyzer = {},
+				rust_analyzer = {},
 
 				lua_ls = {
 					-- cmd = {...},
@@ -550,6 +568,23 @@ require("lazy").setup({
 			cmp.setup({
 				snippet = {
 					expand = function(args)
+						-- local first = 0
+						-- local second = 0
+						-- for i = 1, #args.body do
+						-- 	local c = string.sub(args.body, i, i)
+						--
+						-- 	if c == "(" then
+						-- 		first = i
+						-- 	end
+						-- 	if c == ")" then
+						-- 		second = i
+						-- 	end
+						-- end
+						--
+						-- local newArgs = string.sub(args.body, 1, first) .. "$0" .. string.sub(args.body, second, -1)
+						-- print(newArgs)
+						-- luasnip.lsp_expand(newArgs)
+
 						luasnip.lsp_expand(args.body)
 					end,
 				},
@@ -762,6 +797,12 @@ vim.keymap.set(
 	{ desc = "[D]ocument [D]iagnostics" }
 )
 vim.keymap.set("n", "<leader>wd", "<cmd>Trouble diagnostics toggle<CR>", { desc = "[W]orkspace [D]iagnostics" })
+
+-- Jump to the begining / end of the line
+vim.keymap.set("n", "H", "^")
+vim.keymap.set("v", "H", "^")
+vim.keymap.set("n", "L", "$")
+vim.keymap.set("v", "L", "$")
 
 -- harpoon
 local harpoon = require("harpoon")

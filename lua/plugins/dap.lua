@@ -39,7 +39,7 @@ return {
 			-- online, please don't ask me how to install them :)
 			ensure_installed = {
 				-- Update this to ensure that you have the debuggers for the langs you want
-				"delve",
+				--"delve",
 			},
 		})
 
@@ -55,16 +55,26 @@ return {
 				type = "lldb",
 				request = "launch",
 				program = function()
-					vim.cmd("!cmake --build build/")
-					local exit_code = vim.v.shell_error
-					if exit_code == 0 then
-						vim.api.nvim_feedkeys("<CR>", "n", false)
-						return "build/${workspaceFolderBasename}"
-					else
-						return ""
+					if vim.fn.filereadable("CMakeLists.txt") then
+						vim.cmd("!cmake --build build/")
+						local exit_code = vim.v.shell_error
+						if exit_code == 0 then
+							vim.api.nvim_feedkeys("<CR>", "n", false)
+							return "build/${workspaceFolderBasename}"
+						else
+							return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+						end
+					elseif vim.fn.filereadable("Makefile") then
+						vim.cmd("!make build")
+						local exit_code = vim.v.shell_error
+						if exit_code == 0 then
+							vim.api.nvim_feedkeys("<CR>", "n", false)
+							return "build/${workspaceFolderBasename}"
+						else
+							return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+						end
 					end
-
-					-- return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+					return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
 				end,
 				cwd = "${workspaceFolder}",
 				stopOnEntry = false,
